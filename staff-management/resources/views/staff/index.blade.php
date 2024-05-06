@@ -1,5 +1,3 @@
-<!-- resources/views/staff/index.blade.php -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,6 +14,7 @@
                 <th>Name</th>
                 <th>Surname</th>
                 <th>Gender</th>
+                <th>Action</th> <!-- New column for Action -->
             </tr>
         </thead>
         <tbody>
@@ -25,17 +24,16 @@
                     <td>{{ $s->name }}</td>
                     <td>{{ $s->surname }}</td>
                     <td>{{ $s->gender }}</td>
+                    <td> <!-- New cell for Action -->
+                        <form action="{{ route('staff.deploy') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="staffId" value="{{ $s->id }}">
+                            <button type="submit">Deploy</button>
+                        </form>
+                    </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
-    
-    <form action="{{ route('staff.deploy') }}" method="POST">
-    @foreach($staff as $s)
-        @csrf
-        <input type="hidden" name="staffId" value="{{ $s->id }}">
-        <button type="submit">Deploy</button>
-        @endforeach
-    </form>
 </body>
 </html>

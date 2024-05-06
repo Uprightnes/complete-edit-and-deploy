@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Staff;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\StaffDeploymentMail;
 use Illuminate\Support\Facades\View; 
 use Mpdf\Mpdf;
 
@@ -28,7 +30,16 @@ class StaffController extends Controller
     $pdf = $this->generatePdf($staff);
 
     // Return the PDF as a response
-    return $pdf->output();
+    //return $pdf->output();
+    $recipientEmail = 'uprightness2018@gmail.com'; // Change to recipient's email address
+    $ccEmails = ['eziukwuuprightness@gmail.com']; // Change to CC recipients' email addresses
+
+    Mail::to($recipientEmail)
+        ->cc($ccEmails)
+        ->send(new StaffDeploymentMail($staff, $pdf));
+
+    // Redirect back or any other response as needed
+    return 'email sent';
 }
 private function generatePdf($staff)
 {
