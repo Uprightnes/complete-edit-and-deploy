@@ -29,17 +29,52 @@ class StaffController extends Controller
     // Pass staff details to the PDF view
     $pdf = $this->generatePdf($staff);
 
+     // Get recipient email from the database
+     $recipientEmail = $staff->email;
+
+     // Get CC email addresses from the database
+     $ccEmails = [
+         $staff->currentregionalmisemail,
+         $staff->newreportinglineemail,
+         $staff->newregionalmisemail,
+     ];
+
     // Return the PDF as a response
     //return $pdf->output();
-    $recipientEmail = 'uprightness2018@gmail.com'; // Change to recipient's email address
-    $ccEmails = ['eziukwuuprightness@gmail.com']; // Change to CC recipients' email addresses
+    //$recipientEmail = 'uprightness2018@gmail.com'; // Change to recipient's email address
+    //$ccEmails = ['eziukwuuprightness@gmail.com']; // Change to CC recipients' email addresses
+    $redeploymentType = $staff->redeploymenttype;
 
-    Mail::to($recipientEmail)
-        ->cc($ccEmails)
-        ->send(new StaffDeploymentMail($staff, $pdf));
+    // Check the redeployment type and send the appropriate email
+    try {
+        if ($redeploymentType === 'Strategic Management') {
+            // Send email for strategic management redeployment
+            Mail::to($recipientEmail)
+                ->cc($ccEmails)
+                ->send(new StaffDeploymentMail($staff, $pdf));
+        } elseif ($redeploymentType === 'Audit Recommendation') {
+            // Send email for audit recommendation redeployment
+            Mail::to($recipientEmail)
+                ->cc($ccEmails)
+                ->send(new AuditRecommendationRedeploymentMail($staff, $pdf));
+        } elseif ($redeploymentType === 'Compassionate Ground') {
+            // Send email for audit recommendation redeployment
+            Mail::to($recipientEmail)
+                ->cc($ccEmails)
+                ->send(new CompassionateGroundRedeploymentMail($staff, $pdf));
+        }else {
+            // Default email if redeployment type is not recognized
+            Mail::to($recipientEmail)
+                ->cc($ccEmails)
+                ->send(new RecordDiscripancyRedeploymentMail($staff, $pdf));
+        }
 
-    // Redirect back or any other response as needed
-    return 'email sent';
+        // Email sent successfully
+        return response()->json(['success' => true, 'message' => 'Email sent successfully']);
+    } catch (\Exception $e) {
+        // Error sending email
+        return response()->json(['success' => false, 'message' => $e->getMessage()]);
+    }
 }
 private function generatePdf($staff)
 {

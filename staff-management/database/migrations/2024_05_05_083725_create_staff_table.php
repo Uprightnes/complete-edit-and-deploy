@@ -15,10 +15,28 @@ class CreateStaffTable extends Migration
     {
         Schema::create('staff', function (Blueprint $table) {
             $table->id();
-            $table->integer('staffId');
-            $table->string('name');
+            $table->integer('staffid');
             $table->string('surname');
+            $table->string('othername');
             $table->string('gender');
+            $table->string('currentrole');
+            $table->string('previousfeeder');
+            $table->string('currentregion');
+            $table->string('currentdepartment');
+            $table->string('newrole');
+            $table->string('newfeeder');
+            $table->string('newregion');
+            $table->integer('unit');
+            $table->string('newdepartment');
+            $table->date('effectivedeploymentdate');
+            $table->string('email')->unique();
+            $table->string('currentreportingline');
+            $table->string('currentregionalmisemail')->unique();
+            $table->string('newreportinglinerole');
+            $table->string('newreportinglineemail')->unique();
+            $table->string('newregionalmisemail')->unique();
+            $table->string('redeploymenttype');
+            $table->string('relocationallowance');
             $table->timestamps();
         });
     }
